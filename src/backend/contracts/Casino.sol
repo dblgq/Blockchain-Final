@@ -28,7 +28,6 @@ contract Casino is Ownable{
         token.mint(1000000);
     }
 
-    // Visualizacion del balance de ethers del Smart Contract
     function balanceEthersSC() public view returns (uint256){
         return address(this).balance / 10**18;
     }
@@ -39,30 +38,26 @@ contract Casino is Ownable{
     }
 
      function compraTokens(uint256 _numTokens) public payable{
-        // Registro del ususario
-        // Establecimiento del coste de los tokens a comprar
-        // Evaluacion del dinero que el cliente paga por los tokens
-        require(msg.value >= precioTokens(_numTokens), "Compra menos tokens o paga con mas ethers");
-        // Creacion de nuevos tokens en caso de que no exista suficiente supply
+        require(msg.value >= precioTokens(_numTokens), "Buy less tokens or pay with more ethers");
+
         if  (token.balanceOf(address(this)) < _numTokens){
             token.mint(_numTokens*100000);
         }
-        // Devolucion del dinero sobrante
-        // El Smart Contract devuelve la cantidad restante
+
         payable(msg.sender).transfer(msg.value - precioTokens(_numTokens));
-        // Envio de los tokens al cliente/usuario
+
         token.transfer(address(this), msg.sender, _numTokens);
     }
 
-    // Devolucion de tokens al Smart Contract
+
     function devolverTokens(uint _numTokens) public payable {
-        // El numero de tokens debe ser mayor a 0
-        require(_numTokens > 0, "Necesitas devolver un numero de tokens mayor a 0");
-        // El usuario debe acreditar tener los tokens que quiere devolver
-        require(_numTokens <= token.balanceOf(msg.sender), "No tienes los tokens que deseas devolver");
-        // El usuario transfiere los tokens al Smart Contract
+
+        require(_numTokens > 0, "You need to return a number of tokens greater than 0");
+
+        require(_numTokens <= token.balanceOf(msg.sender), "You do not have the tokens you want to return");
+
         token.transfer(msg.sender, address(this), _numTokens);
-        // El Smart Contract envia los ethers al usuario
+
         payable(msg.sender).transfer(precioTokens(_numTokens)); 
     }
 
@@ -81,11 +76,11 @@ contract Casino is Ownable{
     mapping(address => Bet []) historialApuestas;
 
     function retirarEth(uint _numEther) public payable onlyOwner {
-        // El numero de tokens debe ser mayor a 0
-        require(_numEther > 0, "Necesitas devolver un numero de tokens mayor a 0");
-        // El usuario debe acreditar tener los tokens que quiere devolver
-        require(_numEther <= balanceEthersSC(), "No tienes los tokens que deseas devolver");
-        // Transfiere los ethers solicitados al owner del smart contract'
+
+        require(_numEther > 0, "You need to return a number of tokens greater than 0");
+
+        require(_numEther <= balanceEthersSC(), "You do not have the tokens you want to return");
+
         payable(owner()).transfer(_numEther);
     }
 

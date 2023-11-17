@@ -7,7 +7,6 @@ async function main() {
   const CASINO = await ethers.getContractFactory("Casino");
   const casino = await CASINO.deploy()
 
-  // Save copies of each contracts abi and address to the frontend.
   saveFrontendFiles(casino, "Casino");
   console.log( "Token address:",await  casino.getAdress());
 }
